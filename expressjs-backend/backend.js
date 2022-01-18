@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const port = 5000;
 
@@ -32,7 +33,7 @@ const users = {
        }
     ]
  }
-
+app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -83,13 +84,26 @@ function findUserById(id) {
     //return users['users_list'].filter( (user) => user['id'] === id);
 }
 app.post('/users', (req, res) => {
-    const userToAdd = req.body;
+    const userToAdd = {
+        id: '',
+        name: req.body.name,
+        job: req.body.job,
+    }
+    //console.log(userToAdd);
+    generateID(userToAdd);
+    //console.log(userToAdd);
     addUser(userToAdd);
-    res.status(200).end();
+    res.status(201).send(userToAdd).end();
+    //res.status(201).end();
+
 });
 
 function addUser(user){
     users['users_list'].push(user);
+}
+function generateID(user){
+    user.id = Math.random().toString(36).substr(2, 6);
+    //got random string idea from stack overflow silver ringvee
 }
 app.delete('/users/:id', (req, res) => {
     const id = req.params['id'];
@@ -98,7 +112,8 @@ app.delete('/users/:id', (req, res) => {
         res.status(404).send('Resource not found.');
     else {
         users['users_list'] = deleteUser(id);
-        res.status(200).end();
+        //console.log('sending 204');
+        res.status(204).send(result).end();
     }
 });
 

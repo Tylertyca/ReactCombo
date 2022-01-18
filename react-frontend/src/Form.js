@@ -5,6 +5,7 @@ function Form(props) {
      {
         name: "",
         job: "",
+        //id: "",
      }
   );
   function submitForm() {
